@@ -1,5 +1,6 @@
 package com.bootcampdevsuperior.dscatalog.resources;
 
+import com.bootcampdevsuperior.dscatalog.dto.CategoryDto;
 import com.bootcampdevsuperior.dscatalog.entities.Category;
 import com.bootcampdevsuperior.dscatalog.services.CategoryService;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class CategoryResource {
 
     @GetMapping
     public ResponseEntity<?> findAll(){
-        List<Category> list = categoryService.findAll();
+        List<CategoryDto> list = categoryService.findAll();
         return ResponseEntity.ok().body(list);
     }
 }
