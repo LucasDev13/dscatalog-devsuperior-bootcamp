@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/categories")
 public class CategoryResource {
 
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     public CategoryResource(CategoryService categoryService) {
         this.categoryService = categoryService;
