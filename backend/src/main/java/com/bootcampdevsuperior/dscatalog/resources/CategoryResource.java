@@ -3,6 +3,7 @@ package com.bootcampdevsuperior.dscatalog.resources;
 import com.bootcampdevsuperior.dscatalog.dto.CategoryDto;
 import com.bootcampdevsuperior.dscatalog.entities.Category;
 import com.bootcampdevsuperior.dscatalog.services.CategoryService;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -10,10 +11,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(value = "/api/v1/categories")
 public class CategoryResource {
+
+//    private static Logger log = (Logger) LoggerFactory.getLogger("CategoryResource.class");
 
     private final CategoryService categoryService;
 
@@ -45,5 +49,11 @@ public class CategoryResource {
     public ResponseEntity<?> insert(@PathVariable Long id, @RequestBody CategoryDto dto){
         dto = categoryService.update(id, dto);
         return ResponseEntity.ok().body(dto);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        categoryService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
