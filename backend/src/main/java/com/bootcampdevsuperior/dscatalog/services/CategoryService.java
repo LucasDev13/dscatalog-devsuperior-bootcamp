@@ -7,6 +7,8 @@ import com.bootcampdevsuperior.dscatalog.services.exceptions.DatabaseException;
 import com.bootcampdevsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,5 +68,11 @@ public class CategoryService {
         }catch (DataIntegrityViolationException e){
             throw new DatabaseException("Integrity violation.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CategoryDto> findAllPaged(PageRequest pageRequest) {
+        Page<Category> list = categoryRepository.findAll(pageRequest);
+        return list.map(CategoryDto::new);
     }
 }
