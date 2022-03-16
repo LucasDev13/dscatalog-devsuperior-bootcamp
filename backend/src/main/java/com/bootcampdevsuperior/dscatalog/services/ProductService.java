@@ -1,7 +1,10 @@
 package com.bootcampdevsuperior.dscatalog.services;
 
+import com.bootcampdevsuperior.dscatalog.dto.CategoryDto;
 import com.bootcampdevsuperior.dscatalog.dto.ProductDto;
+import com.bootcampdevsuperior.dscatalog.entities.Category;
 import com.bootcampdevsuperior.dscatalog.entities.Product;
+import com.bootcampdevsuperior.dscatalog.repositories.CategoryRepository;
 import com.bootcampdevsuperior.dscatalog.repositories.ProductRepository;
 import com.bootcampdevsuperior.dscatalog.services.exceptions.DatabaseException;
 import com.bootcampdevsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -21,9 +24,11 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -48,7 +53,7 @@ public class ProductService {
     @Transactional
     public ProductDto insert(ProductDto dto) {
         Product entity = new Product();
-//        entity.setName(dto.getName());
+        copyDtoToEntity(dto, entity);
         entity = productRepository.save(entity);
         return new ProductDto(entity);
     }
@@ -57,7 +62,7 @@ public class ProductService {
     public ProductDto update(Long id, ProductDto dto) {
         try {
             Product entity = productRepository.getOne(id);
-//            entity.setName(dto.getName());
+            copyDtoToEntity(dto, entity);
             entity = productRepository.save(entity);
             return new ProductDto(entity);
         }catch (EntityNotFoundException e){
@@ -72,6 +77,20 @@ public class ProductService {
             throw new ResourceNotFoundException("Id " + id + " not found");
         }catch (DataIntegrityViolationException e){
             throw new DatabaseException("Integrity violation.");
+        }
+    }
+
+    private void copyDtoToEntity(ProductDto dto, Product entity) {
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setDate(dto.getDate());
+        entity.setImgUrl(dto.getImgUrl());
+        entity.setPrice(dto.getPrice());
+
+        entity.getCategories().clear();
+        for(CategoryDto catDto : dto.getCategories()){
+            Category category = categoryRepository.getOne(catDto.getId());
+            entity.getCategories().add(category);
         }
     }
 }
